@@ -15,6 +15,12 @@ To run the EP scheduler, use the following command:
 ./bin/interrupts_EP <input_file.txt>
 ```
 
+To run the EP scheduler, use the following command:
+```bash
+./bin/interrupts_RR <input_file.txt>
+```
 
-
-
+To run the EP scheduler, use the following command:
+```bash
+./bin/interrupts_EP_RR <input_file.txt>
+```

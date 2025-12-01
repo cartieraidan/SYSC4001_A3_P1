@@ -21,6 +21,21 @@ void PID_Sort(std::vector<PCB> &ready_queue) {
     );
 }
 
+PCB& find_highest_PID(std::vector<PCB> &ready_queue) {
+
+    int highest_pid = ready_queue[0].PID;
+    PCB* highest_pcb = &ready_queue[0];
+
+    for (auto &process : ready_queue) {
+        if (process.PID < highest_pid) {
+            highest_pid = process.PID;
+            highest_pcb = &process;
+        }
+    }
+
+    return *highest_pcb;
+}
+
 PCB& find_PCB(int PID, std::vector<PCB> &job_list) {
     
     for (auto &process : job_list) {
@@ -196,6 +211,34 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
 
                 idle_CPU(running); //idle CPU to go back to PID -1
 
+            } else { //implements preemption
+                
+                if (!(ready_queue.empty())) {
+                    PCB highest_pcb = find_highest_PID(ready_queue);
+
+                    if (highest_pcb.PID < running.PID) {
+                        //set running to ready
+                        running.state = READY;
+                        ready_queue.push_back(running);   // put process at back
+
+                        execution_status += print_exec_status(current_time, running.PID, RUNNING, READY);
+
+                        //start the new process with higher priority
+                        running = highest_pcb;
+                        //erase highest PID from ready queue
+                        ready_queue.erase(
+                            std::remove_if(ready_queue.begin(), ready_queue.end(),
+                            [running_pid = running.PID](const PCB &p){ return p.PID == running_pid; }),
+                            ready_queue.end()
+                        );
+                        running.start_time = current_time;
+                        running.state = RUNNING;
+                        sync_queue(job_list, running);
+
+                        execution_status += print_exec_status(current_time, running.PID, READY, RUNNING);
+
+                    }
+                }
             }
         }
         
@@ -207,8 +250,13 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
         //schedule new process if CPU idle
         if (running.PID == -1 && !(ready_queue.empty())) {
             //run_process(running, job_list, ready_queue, current_time);
-            running = ready_queue.front();
-            ready_queue.erase(ready_queue.begin());
+            running = find_highest_PID(ready_queue);
+            //erase highest PID from ready queue
+            ready_queue.erase(
+                std::remove_if(ready_queue.begin(), ready_queue.end(),
+                [running_pid = running.PID](const PCB &p){ return p.PID == running_pid; }),
+                ready_queue.end()
+            );
             running.start_time = current_time;
             running.state = RUNNING;
             sync_queue(job_list, running);
