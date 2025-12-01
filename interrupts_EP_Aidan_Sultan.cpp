@@ -198,8 +198,12 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
         
         //schedule new process if CPU idle
         if (running.PID == -1 && !(ready_queue.empty())) {
+
+            //!!!!!!replace with function run_process
+            
             running = ready_queue.back(); //get highest priority
             running.state = RUNNING; //update state
+            running.start_time = current_time; //update for logic 
             sync_queue(job_list, running); //sync global
             ready_queue.pop_back(); //remove process from ready queue
 
