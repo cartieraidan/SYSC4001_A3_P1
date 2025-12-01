@@ -10,6 +10,16 @@ void FCFS(std::vector<PCB> &ready_queue) {
             );
 }
 
+void PID_Sort(std::vector<PCB> &ready_queue) {
+    std::sort(
+        ready_queue.begin(),
+        ready_queue.end(),
+        []( const PCB &first, const PCB &second ) {
+            return (first.PID < second.PID);
+        }
+    );
+}
+
 std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std::vector<PCB> list_processes) {
 
     std::vector<PCB> ready_queue;   //The ready queue of processes
@@ -18,6 +28,8 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
                                     //to the "Process, Arrival time, Burst time" table that you
                                     //see in questions. You don't need to use it, I put it here
                                     //to make the code easier :).
+
+    std::vector<PCB> allocate_queue; //The wait queue for a process if there are no partitions available
 
     unsigned int current_time = 0;
     PCB running;
@@ -44,15 +56,41 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
         //Population of ready queue is given to you as an example.
         //Go through the list of proceeses
         for(auto &process : list_processes) {
+            bool assigned; //flag if process got allocated
+            bool arrived = false; //flag if the process arrived to be allocated
+            
             if(process.arrival_time == current_time) {//check if the AT = current time
                 //if so, assign memory and put the process into the ready queue
-                assign_memory(process);
+                assigned = assign_memory(process); 
+
+                arrived = true; 
 
                 process.state = READY;  //Set the process state to READY
                 ready_queue.push_back(process); //Add the process to the ready queue
                 job_list.push_back(process); //Add it to the list of processes
 
                 execution_status += print_exec_status(current_time, process.PID, NEW, READY);
+            }
+
+            //adds process to allocate queue if there are no free partitions at the time of arrival
+            if (arrived && !assigned) {
+                allocate_queue.push_back(process);
+            }
+        }
+
+        //try and allocate memory for process
+        if (!(allocate_queue.empty())) {
+
+            for (auto &process : allocate_queue) { 
+
+                if (assign_memory(process)) {
+                    process.state = READY;  //Set the process state to READY
+                    ready_queue.push_back(process); //Add the process to the ready queue
+                    job_list.push_back(process); //Add it to the list of processes
+
+                    execution_status += print_exec_status(current_time, process.PID, NEW, READY);
+
+                }
             }
         }
 
@@ -62,7 +100,7 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
         /////////////////////////////////////////////////////////////////
 
         //////////////////////////SCHEDULER//////////////////////////////
-        FCFS(ready_queue); //example of FCFS is shown here
+        PID_Sort(ready_queue); //tested and works, puts Highest PID to back of queue
         /////////////////////////////////////////////////////////////////
 
     }
