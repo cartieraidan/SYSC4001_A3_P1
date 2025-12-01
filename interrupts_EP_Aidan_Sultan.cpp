@@ -1,11 +1,4 @@
-/**
- * @file interrupts.cpp
- * @author Sasisekhar Govind
- * @brief template main.cpp file for Assignment 3 Part 1 of SYSC4001
- * 
- */
-
-#include<interrupts_student1_student2.hpp>
+#include<interrupts_Aidan_Sultan.hpp>
 
 void FCFS(std::vector<PCB> &ready_queue) {
     std::sort( 
@@ -36,6 +29,8 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
 
     //make the output table (the header row)
     execution_status = print_exec_header();
+
+    std::cout << "Starting while loop" << std::endl;
 
     //Loop while till there are no ready or waiting processes.
     //This is the main reason I have job_list, you don't have to use it.
@@ -71,6 +66,9 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
         /////////////////////////////////////////////////////////////////
 
     }
+
+    //currently stuck in loop
+    std::cout << "Ending while loop" << std::endl;
     
     //Close the output table
     execution_status += print_exec_footer();
