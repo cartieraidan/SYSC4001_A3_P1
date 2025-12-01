@@ -30,6 +30,7 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
                                     //to make the code easier :).
 
     std::vector<PCB> allocate_queue; //The wait queue for a process if there are no partitions available
+    std::unordered_map<int, unsigned int> io_duration; //I/O duration map for PCB's in wait queue
 
     unsigned int current_time = 0;
     PCB running;
@@ -95,8 +96,55 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
         }
 
         ///////////////////////MANAGE WAIT QUEUE/////////////////////////
-        //This mainly involves keeping track of how long a process must remain in the ready queue
+        if (!(io_duration.empty())) { //decrement of I/O of process in wait queue
+            
+            for (auto pair = io_duration.begin(); pair != io_duration.end();) {
+                int PID = pair->first;
+                unsigned int &remaining = pair->second;
+                
+                //if process done I/O wait
+                if (remaining == 0) {
+                    PCB current_PCB = find_PCB(PID, job_list); //gets PCB referenxe
 
+                    current_PCB.state = READY;  //Set the process state to READY
+
+                    sync_queue(job_list, current_PCB);
+
+                    remove_from_waitQ(current_PCB.PID, wait_queue); //remove from wait queue
+                    ready_queue.push_back(current_PCB); //Add the process to the ready queue
+
+                    execution_status += print_exec_status(current_time, current_PCB.PID, WAITING, READY);
+
+                    pair = io_duration.erase(pair); //erase from map and return valid iterator
+
+                } else {
+                    --remaining; //decrement I/O duration time
+                    ++pair;
+
+                }
+
+            }
+
+        }
+
+        if (running.PID != -1) { //not doing logic on idle CPU
+            
+            if (current_time - running.start_time % running.io_freq == 0) { //if process requires IO
+
+                wait_queue.push_back(running); //add to I/O wait queue
+                running.state = WAITING;
+
+                sync_queue(job_list, running); //don't know if needed
+                
+                io_duration[running.PID] = running.io_duration; //adding to map to track I/O duration
+
+                execution_status += print_exec_status(current_time, running.PID, RUNNING, WAITING);
+
+                idle_CPU(running); //idle CPU to go back to PID -1
+
+            }
+        }
+        
         /////////////////////////////////////////////////////////////////
 
         //////////////////////////SCHEDULER//////////////////////////////
@@ -112,6 +160,33 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
     execution_status += print_exec_footer();
 
     return std::make_tuple(execution_status);
+}
+
+PCB find_PCB(int PID, std::vector<PCB> &job_list) {
+    
+    for (auto process : job_list) {
+        
+        if (process.PID == PID) {
+            return process;
+        }
+    }
+
+}
+
+void remove_from_waitQ(int PID, std::vector<PCB> &wait_queue) {
+    
+    if (!(wait_queue.empty())) {
+        //lambda push process we want to the end and captures PID
+        std::stable_partition(
+            wait_queue.begin(),
+            wait_queue.end(),
+            [PID]( const PCB &p ) {
+                return p.PID != PID;
+            }
+        );
+
+        wait_queue.pop_back(); //removing from wait queue
+    }
 }
 
 
