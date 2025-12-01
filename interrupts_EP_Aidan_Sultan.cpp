@@ -73,8 +73,6 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
     //make the output table (the header row)
     execution_status = print_exec_header();
 
-    std::cout << "Starting while loop" << std::endl;
-
     //Loop while till there are no ready or waiting processes.
     //This is the main reason I have job_list, you don't have to use it.
     while(!all_process_terminated(job_list) || job_list.empty()) {
@@ -207,9 +205,6 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
         current_time++;
 
     }
-
-    //currently stuck in loop
-    std::cout << "Ending while loop" << std::endl;
     
     //Close the output table
     execution_status += print_exec_footer();
