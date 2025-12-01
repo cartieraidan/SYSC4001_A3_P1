@@ -1,0 +1,49 @@
++------------------------------------------------+
+|Time of Transition |PID | Old State | New State |
++------------------------------------------------+
+|                 0 | 10 |       NEW |     READY |
+|                 0 | 10 |     READY |   RUNNING |
+|                 2 | 17 |       NEW |     READY |
+|                 3 | 19 |       NEW |     READY |
+|                 5 | 10 |   RUNNING |   WAITING |
+|                 5 | 19 |     READY |   RUNNING |
+|                 9 | 10 |   WAITING |     READY |
+|                10 | 19 |   RUNNING |TERMINATED |
+|                10 | 17 |     READY |   RUNNING |
+|                11 | 17 |   RUNNING |   WAITING |
+|                11 | 10 |     READY |   RUNNING |
+|                13 | 17 |   WAITING |     READY |
+|                16 | 10 |   RUNNING |   WAITING |
+|                16 | 17 |     READY |   RUNNING |
+|                17 | 17 |   RUNNING |   WAITING |
+|                19 | 17 |   WAITING |     READY |
+|                19 | 17 |     READY |   RUNNING |
+|                20 | 10 |   WAITING |     READY |
+|                20 | 17 |   RUNNING |   WAITING |
+|                20 | 10 |     READY |   RUNNING |
+|                22 | 17 |   WAITING |     READY |
+|                25 | 10 |   RUNNING |   WAITING |
+|                25 | 17 |     READY |   RUNNING |
+|                26 | 17 |   RUNNING |   WAITING |
+|                28 | 17 |   WAITING |     READY |
+|                28 | 17 |     READY |   RUNNING |
+|                29 | 10 |   WAITING |     READY |
+|                29 | 17 |   RUNNING |   WAITING |
+|                29 | 10 |     READY |   RUNNING |
+|                31 | 17 |   WAITING |     READY |
+|                34 | 10 |   RUNNING |TERMINATED |
+|                34 | 17 |     READY |   RUNNING |
+|                35 | 17 |   RUNNING |   WAITING |
+|                37 | 17 |   WAITING |     READY |
+|                37 | 17 |     READY |   RUNNING |
+|                38 | 17 |   RUNNING |   WAITING |
+|                40 | 17 |   WAITING |     READY |
+|                40 | 17 |     READY |   RUNNING |
+|                41 | 17 |   RUNNING |   WAITING |
+|                43 | 17 |   WAITING |     READY |
+|                43 | 17 |     READY |   RUNNING |
+|                44 | 17 |   RUNNING |   WAITING |
+|                46 | 17 |   WAITING |     READY |
+|                46 | 17 |     READY |   RUNNING |
+|                47 | 17 |   RUNNING |TERMINATED |
++------------------------------------------------+

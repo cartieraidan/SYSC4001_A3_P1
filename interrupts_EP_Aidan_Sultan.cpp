@@ -92,13 +92,15 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
                 //if so, assign memory and put the process into the ready queue
                 assigned = assign_memory(process); 
 
-                arrived = true; 
+                if (assigned) {
+                    arrived = true; 
 
-                process.state = READY;  //Set the process state to READY
-                ready_queue.push_back(process); //Add the process to the ready queue
-                job_list.push_back(process); //Add it to the list of processes
+                    process.state = READY;  //Set the process state to READY
+                    ready_queue.push_back(process); //Add the process to the ready queue
+                    job_list.push_back(process); //Add it to the list of processes
 
-                execution_status += print_exec_status(current_time, process.PID, NEW, READY);
+                    execution_status += print_exec_status(current_time, process.PID, NEW, READY);
+                }
             }
 
             //adds process to allocate queue if there are no free partitions at the time of arrival
@@ -247,7 +249,7 @@ int main(int argc, char** argv) {
     //With the list of processes, run the simulation
     auto [exec] = run_simulation(list_process);
 
-    write_output(exec, "execution.txt");
+    write_output(exec, "executionTest20.txt");
 
     return 0;
 }

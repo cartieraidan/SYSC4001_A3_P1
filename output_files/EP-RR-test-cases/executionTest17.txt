@@ -1,0 +1,35 @@
++------------------------------------------------+
+|Time of Transition |PID | Old State | New State |
++------------------------------------------------+
+|                 0 | 10 |       NEW |     READY |
+|                 0 | 10 |     READY |   RUNNING |
+|                 1 | 15 |       NEW |     READY |
+|                 1 | 17 |       NEW |     READY |
+|                 1 | 19 |       NEW |     READY |
+|                50 | 10 |   RUNNING |   WAITING |
+|                50 | 15 |     READY |   RUNNING |
+|               100 | 10 |   WAITING |     READY |
+|               100 | 15 |   RUNNING |     READY |
+|               100 | 10 |     READY |   RUNNING |
+|               150 | 10 |   RUNNING |   WAITING |
+|               150 | 15 |     READY |   RUNNING |
+|               200 | 10 |   WAITING |     READY |
+|               200 | 15 |   RUNNING |     READY |
+|               200 | 10 |     READY |   RUNNING |
+|               250 | 10 |   RUNNING |   WAITING |
+|               250 | 15 |     READY |   RUNNING |
+|               300 | 10 |   WAITING |     READY |
+|               300 | 15 |   RUNNING |     READY |
+|               300 | 10 |     READY |   RUNNING |
+|               350 | 10 |   RUNNING |TERMINATED |
+|               350 | 15 |     READY |   RUNNING |
+|               400 | 15 |   RUNNING |TERMINATED |
+|               400 | 17 |     READY |   RUNNING |
+|               500 | 17 |   RUNNING |     READY |
+|               500 | 17 |     READY |   RUNNING |
+|               600 | 17 |   RUNNING |TERMINATED |
+|               600 | 19 |     READY |   RUNNING |
+|               700 | 19 |   RUNNING |     READY |
+|               700 | 19 |     READY |   RUNNING |
+|               800 | 19 |   RUNNING |TERMINATED |
++------------------------------------------------+
