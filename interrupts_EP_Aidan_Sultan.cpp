@@ -175,7 +175,7 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
                 terminate_process(running, job_list);
                 idle_CPU(running); //no longer any process in CPU
 
-            } else if ((current_time - running.start_time) % (running.io_freq + 1) == 0 && running.io_freq != 0) { //if process requires IO
+            } else if ((current_time - running.start_time) % (running.io_freq) == 0 && running.io_freq != 0) { //if process requires IO
 
                 wait_queue.push_back(running); //add to I/O wait queue
                 running.state = WAITING;
