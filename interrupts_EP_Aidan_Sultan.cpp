@@ -93,6 +93,13 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
 
                 }
             }
+
+            //removes from allocate queue
+            allocate_queue.erase(
+                std::remove_if(allocate_queue.begin(), allocate_queue.end(),
+                [](const PCB &p){ return p.state == READY; }),
+                allocate_queue.end()
+            );
         }
 
         ///////////////////////MANAGE WAIT QUEUE/////////////////////////
@@ -138,7 +145,7 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
                 terminate_process(running, job_list);
                 idle_CPU(running); //no longer any process in CPU
 
-            } else if (current_time - running.start_time % running.io_freq == 0) { //if process requires IO
+            } else if ((current_time - running.start_time) % running.io_freq == 0) { //if process requires IO
 
                 wait_queue.push_back(running); //add to I/O wait queue
                 running.state = WAITING;
@@ -160,7 +167,7 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
         PID_Sort(ready_queue); //tested and works, puts Highest PID to back of queue
         
         //schedule new process if CPU idle
-        if (running.PID == -1) {
+        if (running.PID == -1 && !(ready_queue.empty())) {
             running = ready_queue.back(); //get highest priority
             running.state = RUNNING; //update state
             sync_queue(job_list, running); //sync global
@@ -169,6 +176,8 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
             execution_status += print_exec_status(current_time, running.PID, READY, RUNNING);
         }
         /////////////////////////////////////////////////////////////////
+
+        current_time++;
 
     }
 
@@ -181,14 +190,17 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
     return std::make_tuple(execution_status);
 }
 
-PCB find_PCB(int PID, std::vector<PCB> &job_list) {
+PCB& find_PCB(int PID, std::vector<PCB> &job_list) {
     
-    for (auto process : job_list) {
+    for (auto &process : job_list) {
         
         if (process.PID == PID) {
             return process;
         }
     }
+
+    //should always be found
+    throw std::runtime_error("PCB not found in job_list");
 
 }
 
