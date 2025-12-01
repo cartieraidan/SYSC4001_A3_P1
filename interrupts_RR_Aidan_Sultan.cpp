@@ -1,4 +1,5 @@
 #include<interrupts_Aidan_Sultan.hpp>
+#define TIME_QUANTUM 100
 
 void FCFS(std::vector<PCB> &ready_queue) {
     std::sort( 
@@ -175,6 +176,15 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
                 terminate_process(running, job_list);
                 idle_CPU(running); //no longer any process in CPU
 
+            } else if ((current_time - running.start_time) == TIME_QUANTUM) { //check quantum expiration
+
+                running.state = READY;
+                ready_queue.push_back(running);   // put process at back
+
+                execution_status += print_exec_status(current_time, running.PID, RUNNING, READY);
+
+                idle_CPU(running); // clears running.PID = -1
+
             } else if ((current_time - running.start_time) % (running.io_freq) == 0 && running.io_freq != 0) { //if process requires IO
 
                 wait_queue.push_back(running); //add to I/O wait queue
@@ -194,11 +204,16 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
         /////////////////////////////////////////////////////////////////
 
         //////////////////////////SCHEDULER//////////////////////////////
-        PID_Sort(ready_queue); //tested and works, puts Highest PID to back of queue
+        //PID_Sort(ready_queue); //tested and works, puts Highest PID to back of queue
         
         //schedule new process if CPU idle
         if (running.PID == -1 && !(ready_queue.empty())) {
-            run_process(running, job_list, ready_queue, current_time);
+            //run_process(running, job_list, ready_queue, current_time);
+            running = ready_queue.front();
+            ready_queue.erase(ready_queue.begin());
+            running.start_time = current_time;
+            running.state = RUNNING;
+            sync_queue(job_list, running);
 
             execution_status += print_exec_status(current_time, running.PID, READY, RUNNING);
         }
