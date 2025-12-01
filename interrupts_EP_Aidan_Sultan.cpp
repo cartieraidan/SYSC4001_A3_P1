@@ -129,7 +129,16 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
 
         if (running.PID != -1) { //not doing logic on idle CPU
             
-            if (current_time - running.start_time % running.io_freq == 0) { //if process requires IO
+            running.remaining_time--; //decrements current running process
+
+            if (running.remaining_time == 0) { //if process is done
+
+                execution_status += print_exec_status(current_time, running.PID, RUNNING, TERMINATED);
+                
+                terminate_process(running, job_list);
+                idle_CPU(running); //no longer any process in CPU
+
+            } else if (current_time - running.start_time % running.io_freq == 0) { //if process requires IO
 
                 wait_queue.push_back(running); //add to I/O wait queue
                 running.state = WAITING;
@@ -149,6 +158,16 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
 
         //////////////////////////SCHEDULER//////////////////////////////
         PID_Sort(ready_queue); //tested and works, puts Highest PID to back of queue
+        
+        //schedule new process if CPU idle
+        if (running.PID == -1) {
+            running = ready_queue.back(); //get highest priority
+            running.state = RUNNING; //update state
+            sync_queue(job_list, running); //sync global
+            ready_queue.pop_back(); //remove process from ready queue
+
+            execution_status += print_exec_status(current_time, running.PID, READY, RUNNING);
+        }
         /////////////////////////////////////////////////////////////////
 
     }
