@@ -20,6 +20,36 @@ void PID_Sort(std::vector<PCB> &ready_queue) {
     );
 }
 
+PCB& find_PCB(int PID, std::vector<PCB> &job_list) {
+    
+    for (auto &process : job_list) {
+        
+        if (process.PID == PID) {
+            return process;
+        }
+    }
+
+    //should always be found
+    throw std::runtime_error("PCB not found in job_list");
+
+}
+
+void remove_from_waitQ(int PID, std::vector<PCB> &wait_queue) {
+    
+    if (!(wait_queue.empty())) {
+        //lambda push process we want to the end and captures PID
+        std::stable_partition(
+            wait_queue.begin(),
+            wait_queue.end(),
+            [PID]( const PCB &p ) {
+                return p.PID != PID;
+            }
+        );
+
+        wait_queue.pop_back(); //removing from wait queue
+    }
+}
+
 std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std::vector<PCB> list_processes) {
 
     std::vector<PCB> ready_queue;   //The ready queue of processes
@@ -152,7 +182,7 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
 
                 sync_queue(job_list, running); //don't know if needed
                 
-                io_duration[running.PID] = running.io_duration; //adding to map to track I/O duration
+                io_duration[running.PID] = running.io_duration - 1; //adding to map to track I/O duration
 
                 execution_status += print_exec_status(current_time, running.PID, RUNNING, WAITING);
 
@@ -188,36 +218,6 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
     execution_status += print_exec_footer();
 
     return std::make_tuple(execution_status);
-}
-
-PCB& find_PCB(int PID, std::vector<PCB> &job_list) {
-    
-    for (auto &process : job_list) {
-        
-        if (process.PID == PID) {
-            return process;
-        }
-    }
-
-    //should always be found
-    throw std::runtime_error("PCB not found in job_list");
-
-}
-
-void remove_from_waitQ(int PID, std::vector<PCB> &wait_queue) {
-    
-    if (!(wait_queue.empty())) {
-        //lambda push process we want to the end and captures PID
-        std::stable_partition(
-            wait_queue.begin(),
-            wait_queue.end(),
-            [PID]( const PCB &p ) {
-                return p.PID != PID;
-            }
-        );
-
-        wait_queue.pop_back(); //removing from wait queue
-    }
 }
 
 
